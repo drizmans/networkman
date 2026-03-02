@@ -1,0 +1,68 @@
+node_id = "lnk-pi-01"
+
+[timing]
+network_interval_sec = 1.0
+dns_interval_sec = 2.0
+
+[thresholds]
+fail_streak = 2
+recover_streak = 2
+pre_seconds = 10
+post_seconds = 15
+dns_fail_ratio = 0.5
+
+[dns]
+domains = ["example.com", "cloudflare.com", "google.com", "amazon.com"]
+qtype = "A"
+resolvers = ["system", "1.1.1.1", "8.8.8.8"]
+timeout_ms = 1200
+
+[storage]
+log_dir = "./netwatch_logs"
+max_recent_incidents = 10
+
+[diagnostics]
+enable = true
+traceroute_targets = ["1.1.1.1", "8.8.8.8"]
+
+[targets.router]
+device_id = "tp_link_router"
+name = "TP-Link 300Mbps Wireless N Modem Router"
+ip = "192.168.1.1"
+role = "router"
+
+[[targets.externals]]
+device_id = "external_cloudflare"
+name = "Cloudflare DNS"
+ip = "1.1.1.1"
+role = "external"
+
+[[targets.externals]]
+device_id = "external_google"
+name = "Google DNS"
+ip = "8.8.8.8"
+role = "external"
+
+[[targets.locals]]
+device_id = "netgear_switch"
+name = "Netgear 24-Port Gigabit Smart Switch PoE + 4 SFP"
+ip = "192.168.1.151"
+role = "switch"
+
+[[targets.locals]]
+device_id = "clear_flow"
+name = "Clear Flow by Antiference"
+ip = "192.168.1.200"
+role = "local_device"
+
+[[targets.locals]]
+device_id = "lnk_pi_02"
+name = "lnk-pi-02"
+ip = "192.168.1.108"
+role = "observer_node"
+
+[[targets.locals]]
+device_id = "lnk_pi_01"
+name = "lnk-pi-01"
+ip = "192.168.1.110"
+role = "observer_node"
