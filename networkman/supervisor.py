@@ -41,6 +41,18 @@ class Supervisor:
         self.tick_events: List[Dict[str, Any]] = []
         self.external_ids = {d.device_id for d in cfg.externals}
         self.router_id = cfg.router.device_id
+        self.local_ids = {d.device_id for d in cfg.locals}
+        self.local_device_defaults: Dict[str, Dict[str, Any]] = {
+            d.device_id: {
+                "device_id": d.device_id,
+                "device_name": d.name,
+                "target_ip": d.ip,
+                "device_role": d.role,
+                "ok": None,
+                "rtt_ms": None,
+            }
+            for d in cfg.locals
+        }
 
         self.engine = IncidentEngine(cfg, self.log_dir)
         self.workers: Dict[str, mp.Process] = {}
@@ -199,7 +211,7 @@ class Supervisor:
                     self.cfg.node_id,
                     self.hostname,
                     active,
-                    self.network_status,
+                    self._build_local_device_view(),
                     self.dns_rollup,
                     list(self.engine.recent),
                     list(self.feed),
@@ -214,3 +226,10 @@ class Supervisor:
             except Empty:
                 continue
             self._process_event(event)
+
+    def _build_local_device_view(self) -> Dict[str, Dict[str, Any]]:
+        view = dict(self.local_device_defaults)
+        for device_id, status in self.network_status.items():
+            if device_id in self.local_ids:
+                view[device_id] = status
+        return view

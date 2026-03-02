@@ -16,8 +16,13 @@ def _device_table(device_status: Dict[str, Dict[str, Any]]) -> Table:
     table.add_column("Status")
     table.add_column("Last RTT")
     for item in sorted(device_status.values(), key=lambda x: x.get("device_name", "")):
-        ok = item.get("ok", False)
-        status = "UP" if ok else "DOWN"
+        ok = item.get("ok", None)
+        if ok is True:
+            status = "UP"
+        elif ok is False:
+            status = "DOWN"
+        else:
+            status = "UNKNOWN"
         rtt = item.get("rtt_ms")
         rtt_s = f"{rtt:.1f} ms" if isinstance(rtt, (int, float)) else "-"
         table.add_row(item.get("device_name", "?"), item.get("target_ip", "?"), item.get("device_role", "?"), status, rtt_s)

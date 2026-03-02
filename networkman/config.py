@@ -80,6 +80,7 @@ class AppConfig:
                 "switch",
             ),
             Device("clear_flow", "Clear Flow by Antiference", "192.168.1.200", "local_device"),
+            Device("lnk_pi_03", "lnk-pi-03", "192.168.1.167", "observer_node"),
             Device("lnk_pi_02", "lnk-pi-02", "192.168.1.108", "observer_node"),
             Device("lnk_pi_01", "lnk-pi-01", "192.168.1.110", "observer_node"),
         ]

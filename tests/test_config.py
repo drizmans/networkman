@@ -12,6 +12,7 @@ class ConfigTests(unittest.TestCase):
         self.assertIn("netgear_switch", ids)
         self.assertIn("lnk_pi_01", ids)
         self.assertIn("lnk_pi_02", ids)
+        self.assertIn("lnk_pi_03", ids)
 
 
 if __name__ == "__main__":
