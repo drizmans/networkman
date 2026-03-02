@@ -8,6 +8,44 @@ from rich.table import Table
 from rich.text import Text
 
 
+def _router_wan_table(router_status: Dict[str, Any] | None, external_status: Dict[str, Dict[str, Any]]) -> Table:
+    table = Table(title="Router / WAN", expand=True)
+    table.add_column("Target")
+    table.add_column("IP")
+    table.add_column("Role")
+    table.add_column("Status")
+    table.add_column("Last RTT")
+
+    if router_status:
+        ok = router_status.get("ok", None)
+        status = "UP" if ok is True else ("DOWN" if ok is False else "UNKNOWN")
+        rtt = router_status.get("rtt_ms")
+        rtt_s = f"{rtt:.1f} ms" if isinstance(rtt, (int, float)) else "-"
+        table.add_row(
+            router_status.get("device_name", "Router"),
+            router_status.get("target_ip", "?"),
+            "router",
+            status,
+            rtt_s,
+        )
+    else:
+        table.add_row("Router", "-", "router", "UNKNOWN", "-")
+
+    for item in sorted(external_status.values(), key=lambda x: x.get("device_name", "")):
+        ok = item.get("ok", None)
+        status = "UP" if ok is True else ("DOWN" if ok is False else "UNKNOWN")
+        rtt = item.get("rtt_ms")
+        rtt_s = f"{rtt:.1f} ms" if isinstance(rtt, (int, float)) else "-"
+        table.add_row(
+            item.get("device_name", "?"),
+            item.get("target_ip", "?"),
+            item.get("device_role", "external"),
+            status,
+            rtt_s,
+        )
+    return table
+
+
 def _device_table(device_status: Dict[str, Dict[str, Any]]) -> Table:
     table = Table(title="Named Local Devices", expand=True)
     table.add_column("Device")
@@ -65,6 +103,8 @@ def build_dashboard(
     node_id: str,
     hostname: str,
     active_incident: Dict[str, Any] | None,
+    router_status: Dict[str, Any] | None,
+    external_status: Dict[str, Dict[str, Any]],
     device_status: Dict[str, Dict[str, Any]],
     dns_stats: Dict[str, Dict[str, Any]],
     recent_incidents: List[Dict[str, Any]],
@@ -81,6 +121,7 @@ def build_dashboard(
     panels = [
         Panel(header, title="Observer Node"),
         Panel(active_text, title="Incident State"),
+        _router_wan_table(router_status, external_status),
         _device_table(device_status),
         _dns_table(dns_stats),
         _recent_incidents(recent_incidents),

@@ -211,6 +211,8 @@ class Supervisor:
                     self.cfg.node_id,
                     self.hostname,
                     active,
+                    self.network_status.get(self.router_id),
+                    self._build_external_view(),
                     self._build_local_device_view(),
                     self.dns_rollup,
                     list(self.engine.recent),
@@ -233,3 +235,10 @@ class Supervisor:
             if device_id in self.local_ids:
                 view[device_id] = status
         return view
+
+    def _build_external_view(self) -> Dict[str, Dict[str, Any]]:
+        out: Dict[str, Dict[str, Any]] = {}
+        for device_id, status in self.network_status.items():
+            if device_id in self.external_ids:
+                out[device_id] = status
+        return out
