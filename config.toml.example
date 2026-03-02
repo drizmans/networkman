@@ -56,6 +56,12 @@ ip = "192.168.1.200"
 role = "local_device"
 
 [[targets.locals]]
+device_id = "lnk_pi_03"
+name = "lnk-pi-03"
+ip = "192.168.1.167"
+role = "observer_node"
+
+[[targets.locals]]
 device_id = "lnk_pi_02"
 name = "lnk-pi-02"
 ip = "192.168.1.108"
